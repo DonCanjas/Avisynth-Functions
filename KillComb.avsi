@@ -1,3 +1,6 @@
+#Requires TIVTC, vinverse, DAA3
+#This Function is meant to eliminate combing safely by filtering only on edges using a mask you will have to make.
+
 Function KillComb(clip c2, int "mode", int "PP", clip "EdgeMask", float "sstr", bool "useDAA3" ) 
 {
 c2
