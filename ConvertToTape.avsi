@@ -37,7 +37,7 @@ vcorr = Default(vcorr, 0.05)
 
 sat =  Default(sat, 1.4)
 
-########################
+##############################################################
 
 pixel = PixelType(c2)
 pixelstring = String(pixel)
