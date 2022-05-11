@@ -51,7 +51,7 @@ U2 = U.blur(1.58).blur(1.58).crop(bleedsize,0,0,0).bilinearresize(width(u), heig
 V2 = V.blur(1.58).blur(1.58).crop(0,0,-bleedsize,0).bilinearresize(width(v), height(v))
 Y = src.Extracty().blur(1)
 
-CombinePlanes(Y, U, V, planes="YUV", source_planes="YYY", sample_clip=src, pixel_type=pixelstring)
+CombinePlanes(Y, U2, V2, planes="YUV", source_planes="YYY", sample_clip=src, pixel_type=pixelstring)
 
 
 dehalo_alpha(rx=halo_x, ry=halo_y, darkstr=-halostr, brightstr=-halostr)
