@@ -9,7 +9,8 @@
 # AddGrainC
 
 
-Function ConvertToTape(clip c2,  int "bleedsize", float "halo_x", float "halo_y", int "halostr", bool "useColorYUV", bool "useLimitRange", int "min_luma", int "max_luma", int "min_chroma", int "max_chroma", float "paramscale", float "var", float "uvar", float "hcorr", float "vcorr", float "sat") {
+Function ConvertToTape(clip c2,  int "bleedsize", float "halo_x", float "halo_y", int "halostr", bool "useColorYUV", bool "useLimitRange", int "min_luma", int "max_luma", int "min_chroma", int "max_chroma", float "paramscale", float "var", float "uvar", float "hcorr", float "vcorr", float "sat") 
+{
 
 #Presets
 
