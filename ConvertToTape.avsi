@@ -1,6 +1,6 @@
 ###############################
 ##       ConvertToTape       ##
-##     v1.1 by DonCanjas     ##
+##     v1.2 by DonCanjas     ##
 ##        11 may 2022        ##
 ###############################
 
@@ -18,8 +18,7 @@ bleedsize = Default(bleedsize, 6)
 
 halostr = Default(halostr, 2)
 halo_x = Default(halo_x, 5)
-
-halo_y = Default(halo_y, 5)
+halo_y = Default(halo_y, halo_x)
 
 useColorYUV =  Default(useColorYUV, True)
 useLimitRange = Default(useLimitRange, False)
