@@ -4,7 +4,6 @@
 
 Function KillComb(clip c2, clip "EdgeMask", bool "useTDeint", int "mthreshL", int "mthreshC", int "type", bool "full", bool "useTFM", int "mode", int "PP", int "cthresh", bool "useVinverse2", float "sstr", bool "useDAA3" ) 
 {
-assert(c2)
 
 useTDeint = Default(useTDeint, True)
 useTFM = Default(useTFM, False)
