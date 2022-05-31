@@ -16,10 +16,9 @@ source=last
 
 
 TFM = source.TFM(mode=mode, PP=PP)
-mask2=EdgeMask.ExtractY().Invert()
 
 
-Deinterlace = (useTFM==True) ? Overlay(TFM, source, mask=mask2) : source
+Deinterlace = (useTFM==True) ? Overlay(TFM, source, mask=EdgeMask) : source
 
 
 Overlay(vinverse2(sstr=sstr, amnt=255, uv=2),mask=EdgeMask)
