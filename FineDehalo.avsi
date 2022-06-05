@@ -1,5 +1,5 @@
 # FineDehalo
-# 1.1 mod8.78
+# 1.1 mod8.78 (plus: darkstr's default is 0.0, so it's sane)
 #
 # This program is free software. It comes without any warranty, to
 # the extent permitted by applicable law. You can redistribute it
