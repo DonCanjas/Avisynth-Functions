@@ -1,0 +1,17 @@
+## V1.0 by DonCanjas 
+### Enlarges images by 2 using nnedi3cl and automatically corrects shift with Spline36ResizeMT
+
+Function nnedi3cl_x2(clip c2, int "nsize", int "nns", int "qual", int "etype", int "pscrn", bool "cshift", int "device", bool "list_device", bool "info")
+{
+cshift = Default(cshift, True)
+
+c2
+
+nnedi3cl(1, dh=True, nsize=nsize, nns=nns, qual=qual, etype=etype, pscrn=pscrn, device=device, list_device=list_device, info=info)
+TurnRight()
+nnedi3cl(1, dh=True, nsize=nsize, nns=nns, qual=qual, etype=etype, pscrn=pscrn, device=device)
+TurnLeft()
+
+(cshift==True) ? Spline36ResizeMT(Width(last), height(last), src_top=-0.5, src_left=-0.5) : last
+
+}
