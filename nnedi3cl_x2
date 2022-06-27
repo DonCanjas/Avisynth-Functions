@@ -6,7 +6,7 @@ Function nnedi3cl_x2(clip c2, int "nsize", int "nns", int "qual", int "etype", i
 
 nns = Default(nns, 4)
 qual = Default(qual, 2)
-pscrn = Default(pscrn, 4)
+pscrn = Default(pscrn, 1)
 cshift = Default(cshift, True)
 
 c2
