@@ -4,6 +4,7 @@
 Function nnedi3cl_x2(clip c2, int "nsize", int "nns", int "qual", int "etype", int "pscrn", bool "cshift", int "device", bool "list_device", bool "info")
 {
 
+nsize = Default(nns, 0)
 nns = Default(nns, 4)
 qual = Default(qual, 2)
 pscrn = Default(pscrn, 1)
