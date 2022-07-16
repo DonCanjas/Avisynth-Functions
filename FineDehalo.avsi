@@ -1,12 +1,12 @@
 # FineDehalo
-# 1.1 mod8.78 (plus: darkstr's default is 0.0, so it's sane)
+# 1.1 mod9
 #
 # This program is free software. It comes without any warranty, to
 # the extent permitted by applicable law. You can redistribute it
 # and/or modify it under the terms of the Do What The Fuck You Want
 # To Public License, Version 2, as published by Sam Hocevar.
 
-Function FineDehalo (clip src, float "rx", float "ry", float "thmi", float "thma", float "thlimi", float "thlima", float "darkstr", float "brightstr", int "showmask", float "contra", bool "excl", float "edgeproc", val "exdehalo", clip "exedgesm")
+Function FineDehalo (clip src, float "rx", float "ry", float "thmi", float "thma", float "thlimi", float "thlima", float "darkstr", float "brightstr", int "showmask", float "contra", bool "excl", float "edgeproc", val "exdehalo", clip "exedgesm", clip "edgemask")
 {
 	rx        = Default (rx,          2)
 	ry        = Default (ry,         rx)
@@ -36,7 +36,7 @@ Function FineDehalo (clip src, float "rx", float "ry", float "thmi", float "thma
 \	           ? dehaloed.FineDehalo_contrasharp (src, contra, false)
 \	           : dehaloed
 
-	edgesm = defined(exedgesm) ? exedgesm : FineDehaloedges(rx=rx, ry=ry, thmi=thmi, thma=thma, thlimi=thlimi, thlima=thlima, showmask=showmask, excl=excl, edgeproc=edgeproc)
+	edgesm = defined(exedgesm) ? exedgesm : FineDehaloedges(rx=rx, ry=ry, thmi=thmi, thma=thma, thlimi=thlimi, thlima=thlima, showmask=showmask, excl=excl, edgeproc=edgeproc, edgemask=edgemask)
 
 	### Masking ###
 
