@@ -13,6 +13,7 @@
 ### eedi3, nnedi3 and SangNom2. Several post processes are taken to avoid details loss on scence or bring in
 ### new artifacts. This script requires YUV420P input.
 ###
+###v0.9.0
 ###Updated functions by DonCanjas - 24 July 2022
 
 Function TAAmbk(clip input, int "aatype", int "aatypeU", int "aatypeV", float "strength", int "preaa", int "cycle",
