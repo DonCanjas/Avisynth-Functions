@@ -86,10 +86,9 @@ Function FineBetaedges (clip src, float "rx", float "ry", float "thmi", float "t
 	### Main edges ###
 
 	# Basic edge detection, thresholding will be applied later.
-	#edges = defined(edgemask) ? edgemask : isy() ? RemoveGrain(20).Retinex_MSRCP().ex_edge(mode="Kirsch", scale=1).mt_inpand(thy=30) : ExtractY().RemoveGrain(20).Retinex_MSRCP().ex_edge(mode="Kirsch", scale=1).mt_inpand(thy=30)
 	luma = defined(edgemask) ? edgemask : isy() ? src :  src.ExtractY()
 	
-	edges = defined(edgemask) ? edgemask : maskmode=="kirsch" ? luma.RemoveGrain(20).Retinex_MSRCP([50, 200, 350]).vsTCanny(mode=1, op=4).mt_inpand(thy=30) :
+	edges = defined(edgemask) ? edgemask : maskmode=="kirsch" ? luma.RemoveGrain(20).Retinex_MSRCP([50, 200, 350]).ex_edge(mode="Kirsch", scale=1).mt_inpand(thy=30) :
 	\ maskmode=="old" ? luma.Retinex_MSRCP([50, 200, 350]).mt_edge(mode="prewitt", thY1=0, thY2=255) :
 	\ maskmode=="TEdge" ? luma.RemoveGrain(mode=20).Retinex_MSRCP([50, 200, 350]).vsTEdgeMask(threshY=14, type=TEdgeType, scale=1).mt_inpand(thy=30) :
 	\ nop()
