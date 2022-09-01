@@ -2,7 +2,7 @@
 # Forked from FineDehalo 1.1 mod8.78
 #
 #Supports YUV[A] and Y from 8-32 bit.
-#2022.09.21
+#2022.09.01
 
 Function FineBeta (clip src, float "rx", float "ry", float "thmi", float "thma", float "thlimi", float "thlima", float "darkstr", float "brightstr", int "showmask", float "contra", bool "excl", float "edgeproc", val "exdehalo", clip "exedgesm", clip "edgemask", string "maskmode", int "TEdgeType", bool "useplacebo")
 {
@@ -89,7 +89,7 @@ Function FineBetaedges (clip src, float "rx", float "ry", float "thmi", float "t
 	luma = defined(edgemask) ? edgemask : isy() ? src :  src.ExtractY()
 	
 	edges = defined(edgemask) ? edgemask : maskmode=="kirsch" ? luma.RemoveGrain(20).Retinex_MSRCP([50, 200, 350]).ex_edge(mode="Kirsch", scale=1).mt_inpand(thy=30) :
-	\ maskmode=="old" ? luma.Retinex_MSRCP([50, 200, 350]).mt_edge(mode="prewitt", thY1=0, thY2=255) :
+	\ maskmode=="old" ? luma.mt_edge(mode="prewitt", thY1=0, thY2=255) :
 	\ maskmode=="TEdge" ? luma.RemoveGrain(mode=20).Retinex_MSRCP([50, 200, 350]).vsTEdgeMask(threshY=14, type=TEdgeType, scale=1).mt_inpand(thy=30) :
 	\ nop()
 	
