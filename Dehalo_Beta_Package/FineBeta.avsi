@@ -2,7 +2,7 @@
 # Forked from FineDehalo 1.1 mod8.78
 #
 #Supports YUV[A] and Y from 8-32 bit.
-#2022.08.27
+#2022.09.21
 
 Function FineBeta (clip src, float "rx", float "ry", float "thmi", float "thma", float "thlimi", float "thlima", float "darkstr", float "brightstr", int "showmask", float "contra", bool "excl", float "edgeproc", val "exdehalo", clip "exedgesm", clip "edgemask", string "maskmode", int "TEdgeType", bool "useplacebo")
 {
