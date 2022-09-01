@@ -23,7 +23,7 @@ Function FineBeta (clip src, float "rx", float "ry", float "thmi", float "thma",
 	rx_i = Round (rx)
 	ry_i = Round (ry)
 
-    dehalo_type = useplacebo ? "Dehalo_Beta" : "Dehalo_Beta_placebo"
+    dehalo_type = useplacebo ? "Dehalo_Beta_placebo" : "Dehalo_Beta"
     
 	src
 
