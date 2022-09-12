@@ -1,21 +1,24 @@
-## V1.2 by DonCanjas 
+## V1.3 by DonCanjas 
 ### Enlarges images by 2 using nnedi3cl and automatically corrects shift with z_Spline36Resize
 
-Function nnedi3cl_x2(clip c2, int "nsize", int "nns", int "qual", int "etype", int "pscrn", bool "cshift", int "device", bool "list_device", bool "info")
+Function nnedi3cl_x2(clip c2, int "nsize", int "nns", int "qual", int "etype", int "pscrn", bool "st", bool "cshift", int "device", bool "list_device", bool "info")
 {
 
 nsize = Default(nsize, 0)
 nns = Default(nns, 4)
-qual = Default(qual, 2)
+qual = Default(qual, 1)
 pscrn = Default(pscrn, 1)
 cshift = Default(cshift, True)
 
 c2
 
-nnedi3cl(1, dh=True, nsize=nsize, nns=nns, qual=qual, etype=etype, pscrn=pscrn, device=device, list_device=list_device, info=info)
+nnedi3cl(1, dh=True, nsize=nsize, nns=nns, qual=qual, etype=etype, pscrn=pscrn, st=st, device=device, list_device=list_device, info=info)
 TurnRight()
-nnedi3cl(1, dh=True, nsize=nsize, nns=nns, qual=qual, etype=etype, pscrn=pscrn, device=device)
+FlipHorizontal()
+
+nnedi3cl(1, dh=True, nsize=nsize, nns=nns, qual=qual, etype=etype, pscrn=pscrn, st=st, device=device)
 TurnLeft()
+FlipHorizontal()
 
 (cshift==True) ? z_Spline36Resize(Width(last), height(last), src_top=-0.5, src_left=-0.5) : last
 
