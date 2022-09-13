@@ -13,8 +13,7 @@
 ### eedi3, nnedi3 and SangNom2. Several post processes are taken to avoid details loss on scence or bring in
 ### new artifacts. This script requires YUV420P input.
 ###
-###v0.9.0
-###Updated functions by DonCanjas - 24 July 2022
+    ###Updated functions by DonCanjas - 13 September 2022
 
 Function TAAmbk(clip input, int "aatype", int "aatypeU", int "aatypeV", float "strength", int "preaa", int "cycle",
 \                                       int "mtype", int "magg", clip "mclip", int "mthr", int "mbnr", bool "mclear", int "mepd", int "mipd", float "sigma", float "sigma2", int "txtprt",
@@ -129,7 +128,7 @@ Function TAAmbk_preaa(clip input, int "mode")
 
 
 
-Function TAAmbk_mainaa(clip input, int "aatype", float "strength", int "cycle", bool "nnedi3cl", bool "eedi3m",
+Function TAAmbk_mainaa(clip input, int "aatype", float "strength", int "cycle", bool "usennedi3cl", bool "eedi3m",
 \                                  float "p1", float "p2", float "p3", float "p4", float "p5", float "p6", clip "emask")
 {
     pindex = aatype + 4
@@ -147,7 +146,11 @@ Function TAAmbk_mainaa(clip input, int "aatype", float "strength", int "cycle", 
     dh = Round(h*downScale/4)*4
     upw4 = Round(dw*0.375)*4
     uph4 = Round(dh*0.375)*4
-    nnedi3type = nnedi3cl ? "nnedi3cl" : "nnedi3"
+    cycle = Default(cycle, 0)
+    strength = Default(strength, 1)
+    usennedi3cl = Default(usennedi3cl, false)
+    eedi3m = (abs(aatype) == 2) ? Default(eedi3m, True) : Default(eedi3m, False)
+    nnedi3type = usennedi3cl ? "nnedi3cl" : "nnedi3"
     eedi3mc = eedi3m ? emask.z_BilinearResize(dw, dh).mt_expand() : nop()
     eedi3mct = eedi3m ? eedi3mc.z_BilinearResize(w, uph4).TAAmbk_turnright() : nop()
     
@@ -155,7 +158,7 @@ Function TAAmbk_mainaa(clip input, int "aatype", float "strength", int "cycle", 
     
     aaClip = (aatype == -4) ? preDownClip.eedi2(field=1, mthresh=int(p2), lthresh=int(p3), vthresh=int(p4), maxd=int(p5), nt=int(p6)).TAAmbk_turnright()
     \                                                    .z_PointResize(dh*2, dw*2).SangNom2(aa=int(p1)).TAAmbk_turnleft().SangNom2(aa=int(p1)).TAAmbk_spline36resize(w, h, -0.5, -0.5) :
-    \           (aatype == -3 || aatype == 4) ? preDownClip.Eval(""""""+nnedi3type+"""(dh=true, field=1, nsize=int(p2), nns=int(p3), qual=int(p4))""").TAAmbk_spline36resize(w, uph4, 0, -0.5)
+    \           (aatype == -3 || aatype == 4) ? preDownClip.Eval(""""""+nnedi3type+"""(1, dh=true, nsize=int(p2), nns=int(p3), qual=int(p4))""").TAAmbk_spline36resize(w, uph4, 0, -0.5)
     \                                                                      .TAAmbk_turnright().Eval(""""""+nnedi3type+"""(dh=true, field=1, nsize=int(p2), nns=int(p3), qual=int(p4))""").TAAmbk_spline36resize(uph4, upw4, 0, -0.5)
     \                                                                      .SangNom2(aa=int(p1)).TAAmbk_turnLeft().SangNom2(aa=int(p1)).z_Spline36Resize(w, h) :
     \           (aatype == -2) ? preDownClip.Eedi3(dh=true, field=1, alpha=float(p2), beta=float(p3), gamma=float(p4), nrad=int(p5), mdis=int(p6), mclip=eedi3m ? eedi3mc : undefined()).TAAmbk_spline36resize(w, uph4, 0, -0.5)
@@ -168,8 +171,8 @@ Function TAAmbk_mainaa(clip input, int "aatype", float "strength", int "cycle", 
     \                                                   .eedi2(field=1, mthresh=int(p1), lthresh=int(p2), vthresh=int(p3), maxd=int(p4), nt=int(p5)).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
     \           (aatype == 2) ? preDownClip.Eedi3(dh=true, field=1, alpha=float(p1), beta=float(p2), gamma=float(p3), nrad=int(p4), mdis=int(p5), mclip=eedi3m ? eedi3mc : undefined()).TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_turnright()
     \                                                   .Eedi3(dh=true, field=1, alpha=float(p1), beta=float(p2), gamma=float(p3), nrad=int(p4), mdis=int(p5), mclip=eedi3m ? eedi3mct.z_BilinearResize(h, w) : undefined()).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
-    \           (aatype == 3) ? preDownClip.Eval(""""""+nnedi3type+"""(dh=true, field=1, nsize=int(p1), nns=int(p2), qual=int(p3))""").TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_turnright()
-    \                                                   .Eval(""""""+nnedi3type+"""(dh=true, field=1, nsize=int(p1), nns=int(p2), qual=int(p3))""").TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
+    \           (aatype == 3) ? preDownClip.Eval(""""""+nnedi3type+"""(1, dh=true, nsize=int(p1), nns=int(p2), qual=int(p3))""").TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_turnright()
+    \                                                   .Eval(""""""+nnedi3type+"""(1, dh=true, nsize=int(p1), nns=int(p2), qual=int(p3))""").TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
     \           (aatype == 5) ? preDownClip.z_Spline64Resize(upw4, uph4).Repair(input.GaussResizeMT(upw4, uph4, p=100), 1).SangNom2(aa=int(p1)).TAAmbk_turnright().SangNom2(aa=int(p1)).z_Spline36Resize(h, w).TAAmbk_turnleft() :
     \           (aatype == 6) ? preDownClip.z_Spline64Resize(w, uph4).SangNom2(aa=int(p1)).z_Spline36Resize(w, h).TAAmbk_turnright().z_Spline64Resize(h, upw4).SangNom2(aa=int(p1)).z_Spline36Resize(h, w).TAAmbk_TurnLeft().Repair(input, mode=int(p2)) :
     \           (aatype == 7) ? preDownClip.z_PointResize(dw, dh*2).SangNom2(aa=int(p1)).TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_turnright().z_PointResize(dh, dw*2).SangNom2(aa=int(p1)).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
@@ -184,12 +187,12 @@ Function TAAmbk_mask(clip input, int "mtype", int "magg", int "mthr", int "mbnr"
 {
     w = input.width()
     h = input.height()
-    aaMask = (mtype == 1) ? input.ExtractY().Retinex_MSRCP().vsTCanny(mode=1, sigmaY=sigma) : 
-    \             (mtype == 2) ? input.ExtractY().Retinex_MSRCP().vsTEdgeMask(link=2) :
-    \             (mtype == 3) ? input.ExtractY().Retinex_MSRCP().MSharpen(threshold=mbnr/5, strength=0, mask=true, highq=false) :
-    \             (mtype == 4) ? input.ExtractY().Retinex_MSRCP().mt_edge("sobel",7,7,5,5) :
-    \             (mtype == 5) ? input.ExtractY().Retinex_MSRCP().mt_edge("roberts",0,4,0,4) :
-    \             (mtype == 6) ? input.ExtractY().Retinex_MSRCP().mt_edge("prewitt",0,255,0,0) : nop()
+    aaMask = (mtype == 1) ? input.ExtractY().Retinex_MSRCP([50, 200, 350]).vsTCanny(mode=1, sigmaY=sigma) : 
+    \             (mtype == 2) ? input.ExtractY().Retinex_MSRCP([50, 200, 350]).vsTEdgeMask(link=2) :
+    \             (mtype == 3) ? input.ExtractY().Retinex_MSRCP([50, 200, 350]).MSharpen(threshold=mbnr/5, strength=0, mask=true, highq=false) :
+    \             (mtype == 4) ? input.ExtractY().Retinex_MSRCP([50, 200, 350]).mt_edge("sobel",7,7,5,5) :
+    \             (mtype == 5) ? input.ExtractY().Retinex_MSRCP([50, 200, 350]).mt_edge("roberts",0,4,0,4) :
+    \             (mtype == 6) ? input.ExtractY().Retinex_MSRCP([50, 200, 350]).mt_edge("prewitt",0,255,0,0) : nop()
     
     aaMaskThr = (mbnr <= 0) ? aaMask :
     \                  (mtype == 1) ? aaMask.mt_lut("x "+string(mthr)+" <= x "+string(mbnr)+" >> x "+string(mbnr)+" << ?", U=1, V=1) :
@@ -199,7 +202,7 @@ Function TAAmbk_mask(clip input, int "mtype", int "magg", int "mthr", int "mbnr"
     aaMaskBnr = (mbnr == -1) ? aaMaskThr.mt_binarize(mthr) : aaMaskThr
     
     aaMaskAgg = (mtype == 1 && magg != 0) ? Eval("""
-                                                  aggMask = input.ExtractY().Retinex_MSRCP().vsTCanny(mode=0, sigmay=sigma2).mt_expand()
+                                                  aggMask = input.ExtractY().Retinex_MSRCP([50, 200, 350]).vsTCanny(mode=0, sigmay=sigma2).mt_expand()
                                                   return mt_lutxy(aggMask, aaMaskBnr, "y "+string(magg)+" > x 0 ?")
                                                """) : aaMaskBnr
     
