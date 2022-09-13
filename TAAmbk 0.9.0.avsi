@@ -13,7 +13,7 @@
 ### eedi3, nnedi3 and SangNom2. Several post processes are taken to avoid details loss on scence or bring in
 ### new artifacts. This script requires YUV420P input.
 ###
-    ###Updated functions by DonCanjas - 13 September 2022
+###Updated functions by DonCanjas - 24 July 2022
 
 Function TAAmbk(clip input, int "aatype", int "aatypeU", int "aatypeV", float "strength", int "preaa", int "cycle",
 \                                       int "mtype", int "magg", clip "mclip", int "mthr", int "mbnr", bool "mclear", int "mepd", int "mipd", float "sigma", float "sigma2", int "txtprt",
@@ -117,7 +117,7 @@ Function TAAmbk(clip input, int "aatype", int "aatypeU", int "aatypeV", float "s
 Function TAAmbk_preaa(clip input, int "mode")
 {
     nn = (mode == 2) ? nop() : input.nnedi3(field=-2)
-    nnt = (mode == 1) ? nop() : input.TAAmbk_TurnLeft().nnedi3(field=-2).TAAmbk_TurnRight()
+    nnt = (mode == 1) ? nop() : input.TAAmbk_Transpose().nnedi3(field=-2).TAAmbk_Transpose()
     clph = (mode == 2) ? nop() : mt_average(selecteven(nn), selectodd(nn), U=3, V=3)
     clpv = (mode == 1) ? nop() : mt_average(selecteven(nnt), selectodd(nnt), U=3, V=3)
     clp = (mode == -1) ? mt_average(clph, clpv, U=3, V=3) : nop()
@@ -152,30 +152,30 @@ Function TAAmbk_mainaa(clip input, int "aatype", float "strength", int "cycle", 
     eedi3m = (abs(aatype) == 2) ? Default(eedi3m, True) : Default(eedi3m, False)
     nnedi3type = usennedi3cl ? "nnedi3cl" : "nnedi3"
     eedi3mc = eedi3m ? emask.z_BilinearResize(dw, dh).mt_expand() : nop()
-    eedi3mct = eedi3m ? eedi3mc.z_BilinearResize(w, uph4).TAAmbk_turnright() : nop()
+    eedi3mct = eedi3m ? eedi3mc.z_BilinearResize(w, uph4).TAAmbk_Transpose() : nop()
     
     preDownClip = (strength == 1) ? input : input.z_Spline36Resize(dw, dh)
     
-    aaClip = (aatype == -4) ? preDownClip.eedi2(field=1, mthresh=int(p2), lthresh=int(p3), vthresh=int(p4), maxd=int(p5), nt=int(p6)).TAAmbk_turnright()
-    \                                                    .z_PointResize(dh*2, dw*2).SangNom2(aa=int(p1)).TAAmbk_turnleft().SangNom2(aa=int(p1)).TAAmbk_spline36resize(w, h, -0.5, -0.5) :
+    aaClip = (aatype == -4) ? preDownClip.eedi2(field=1, mthresh=int(p2), lthresh=int(p3), vthresh=int(p4), maxd=int(p5), nt=int(p6)).TAAmbk_Transpose()
+    \                                                    .z_PointResize(dh*2, dw*2).SangNom2(aa=int(p1)).TAAmbk_Transpose().SangNom2(aa=int(p1)).TAAmbk_spline36resize(w, h, -0.5, -0.5) :
     \           (aatype == -3 || aatype == 4) ? preDownClip.Eval(""""""+nnedi3type+"""(1, dh=true, nsize=int(p2), nns=int(p3), qual=int(p4))""").TAAmbk_spline36resize(w, uph4, 0, -0.5)
-    \                                                                      .TAAmbk_turnright().Eval(""""""+nnedi3type+"""(dh=true, field=1, nsize=int(p2), nns=int(p3), qual=int(p4))""").TAAmbk_spline36resize(uph4, upw4, 0, -0.5)
-    \                                                                      .SangNom2(aa=int(p1)).TAAmbk_turnLeft().SangNom2(aa=int(p1)).z_Spline36Resize(w, h) :
+    \                                                                      .TAAmbk_Transpose().Eval(""""""+nnedi3type+"""(dh=true, field=1, nsize=int(p2), nns=int(p3), qual=int(p4))""").TAAmbk_spline36resize(uph4, upw4, 0, -0.5)
+    \                                                                      .SangNom2(aa=int(p1)).TAAmbk_Transpose().SangNom2(aa=int(p1)).z_Spline36Resize(w, h) :
     \           (aatype == -2) ? preDownClip.Eedi3(dh=true, field=1, alpha=float(p2), beta=float(p3), gamma=float(p4), nrad=int(p5), mdis=int(p6), mclip=eedi3m ? eedi3mc : undefined()).TAAmbk_spline36resize(w, uph4, 0, -0.5)
-    \                                                    .TAAmbk_turnright().Eedi3(dh=true, field=1, alpha=float(p2), beta=float(p3), gamma=float(p4), nrad=int(p5), mdis=int(p6), mclip=eedi3m ? eedi3mct : undefined()).TAAmbk_spline36resize(uph4, upw4, 0, -0.5)
-    \                                                    .SangNom2(aa=int(p1)).TAAmbk_turnleft().SangNom2(aa=int(p1)).z_Spline36Resize(w, h) :
-    \           (aatype == -1) ? preDownClip.eedi2(field=1, mthresh=int(p2), lthresh=int(p3), vthresh=int(p4), maxd=int(p5), nt=int(p6)).TAAmbk_spline36resize(w, uph4, 0, -0.5).TAAmbk_turnright()
-    \                                                    .eedi2(field=1, mthresh=int(p2), lthresh=int(p3), vthresh=int(p4), maxd=int(p5), nt=int(p6)).TAAmbk_spline36resize(uph4, upw4, 0, -0.5).SangNom2(aa=int(p1)).TAAmbk_turnLeft()
+    \                                                    .TAAmbk_Transpose().Eedi3(dh=true, field=1, alpha=float(p2), beta=float(p3), gamma=float(p4), nrad=int(p5), mdis=int(p6), mclip=eedi3m ? eedi3mct : undefined()).TAAmbk_spline36resize(uph4, upw4, 0, -0.5)
+    \                                                    .SangNom2(aa=int(p1)).TAAmbk_Transpose().SangNom2(aa=int(p1)).z_Spline36Resize(w, h) :
+    \           (aatype == -1) ? preDownClip.eedi2(field=1, mthresh=int(p2), lthresh=int(p3), vthresh=int(p4), maxd=int(p5), nt=int(p6)).TAAmbk_spline36resize(w, uph4, 0, -0.5).TAAmbk_Transpose()
+    \                                                    .eedi2(field=1, mthresh=int(p2), lthresh=int(p3), vthresh=int(p4), maxd=int(p5), nt=int(p6)).TAAmbk_spline36resize(uph4, upw4, 0, -0.5).SangNom2(aa=int(p1)).TAAmbk_Transpose()
     \                                                    .SangNom2(aa=int(p1)).z_Spline36Resize(w, h) :
-    \           (aatype == 1) ? preDownClip.eedi2(field=1, mthresh=int(p1), lthresh=int(p2), vthresh=int(p3), maxd=int(p4), nt=int(p5)).TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_turnright()
-    \                                                   .eedi2(field=1, mthresh=int(p1), lthresh=int(p2), vthresh=int(p3), maxd=int(p4), nt=int(p5)).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
-    \           (aatype == 2) ? preDownClip.Eedi3(dh=true, field=1, alpha=float(p1), beta=float(p2), gamma=float(p3), nrad=int(p4), mdis=int(p5), mclip=eedi3m ? eedi3mc : undefined()).TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_turnright()
-    \                                                   .Eedi3(dh=true, field=1, alpha=float(p1), beta=float(p2), gamma=float(p3), nrad=int(p4), mdis=int(p5), mclip=eedi3m ? eedi3mct.z_BilinearResize(h, w) : undefined()).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
-    \           (aatype == 3) ? preDownClip.Eval(""""""+nnedi3type+"""(1, dh=true, nsize=int(p1), nns=int(p2), qual=int(p3))""").TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_turnright()
-    \                                                   .Eval(""""""+nnedi3type+"""(1, dh=true, nsize=int(p1), nns=int(p2), qual=int(p3))""").TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
-    \           (aatype == 5) ? preDownClip.z_Spline64Resize(upw4, uph4).Repair(input.GaussResizeMT(upw4, uph4, p=100), 1).SangNom2(aa=int(p1)).TAAmbk_turnright().SangNom2(aa=int(p1)).z_Spline36Resize(h, w).TAAmbk_turnleft() :
-    \           (aatype == 6) ? preDownClip.z_Spline64Resize(w, uph4).SangNom2(aa=int(p1)).z_Spline36Resize(w, h).TAAmbk_turnright().z_Spline64Resize(h, upw4).SangNom2(aa=int(p1)).z_Spline36Resize(h, w).TAAmbk_TurnLeft().Repair(input, mode=int(p2)) :
-    \           (aatype == 7) ? preDownClip.z_PointResize(dw, dh*2).SangNom2(aa=int(p1)).TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_turnright().z_PointResize(dh, dw*2).SangNom2(aa=int(p1)).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_turnleft() :
+    \           (aatype == 1) ? preDownClip.eedi2(field=1, mthresh=int(p1), lthresh=int(p2), vthresh=int(p3), maxd=int(p4), nt=int(p5)).TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_Transpose()
+    \                                                   .eedi2(field=1, mthresh=int(p1), lthresh=int(p2), vthresh=int(p3), maxd=int(p4), nt=int(p5)).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_Transpose() :
+    \           (aatype == 2) ? preDownClip.Eedi3(dh=true, field=1, alpha=float(p1), beta=float(p2), gamma=float(p3), nrad=int(p4), mdis=int(p5), mclip=eedi3m ? eedi3mc : undefined()).TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_Transpose()
+    \                                                   .Eedi3(dh=true, field=1, alpha=float(p1), beta=float(p2), gamma=float(p3), nrad=int(p4), mdis=int(p5), mclip=eedi3m ? eedi3mct.z_BilinearResize(h, w) : undefined()).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_Transpose() :
+    \           (aatype == 3) ? preDownClip.Eval(""""""+nnedi3type+"""(1, dh=true, nsize=int(p1), nns=int(p2), qual=int(p3))""").TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_Transpose()
+    \                                                   .Eval(""""""+nnedi3type+"""(1, dh=true, nsize=int(p1), nns=int(p2), qual=int(p3))""").TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_Transpose() :
+    \           (aatype == 5) ? preDownClip.z_Spline64Resize(upw4, uph4).Repair(input.GaussResizeMT(upw4, uph4, p=100), 1).SangNom2(aa=int(p1)).TAAmbk_Transpose().SangNom2(aa=int(p1)).z_Spline36Resize(h, w).TAAmbk_Transpose() :
+    \           (aatype == 6) ? preDownClip.z_Spline64Resize(w, uph4).SangNom2(aa=int(p1)).z_Spline36Resize(w, h).TAAmbk_Transpose().z_Spline64Resize(h, upw4).SangNom2(aa=int(p1)).z_Spline36Resize(h, w).TAAmbk_Transpose().Repair(input, mode=int(p2)) :
+    \           (aatype == 7) ? preDownClip.z_PointResize(dw, dh*2).SangNom2(aa=int(p1)).TAAmbk_spline36resize(w, h, 0, -0.5).TAAmbk_Transpose().z_PointResize(dh, dw*2).SangNom2(aa=int(p1)).TAAmbk_spline36resize(h, w, 0, -0.5).TAAmbk_Transpose() :
     \                                   preDownClip
     
     return (cycle==0) ? aaClip : aaClip.TAAmbk_mainaa(aatype, strength, cycle - 1, nnedi3cl, eedi3m, p1, p2, p3, p4, p5, p6, emask)
@@ -282,27 +282,11 @@ Function TAAmbk_spline36resize(clip input, int "w", int "h", float "sx", float "
 }
 
     
-Function TAAmbk_turnleft(clip input)
+Function TAAmbk_Transpose(clip input)
 {
-    try
-    {
-        return input.fturnleft()
-    }
-    catch(error_msg)
-    {
-        return input.TurnLeft()
-    }
-}
- 
- 
-Function TAAmbk_turnright(clip input)
-{
-    try
-    {
-        return input.fturnright()
-    }
-    catch(error_msg)
-    {
-        return input.TurnRight()
-    }
+
+input
+TurnRight()
+FlipHorizontal()
+
 }
