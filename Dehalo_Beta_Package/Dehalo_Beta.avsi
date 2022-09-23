@@ -1,5 +1,5 @@
 #Dehalo_Beta: a fork of DeHalo_alpha_MT2 with 32 bit float support. 
-#Requirements: avs+, masktools2, RemoveGrain & avsresize. 
+#Requirements: avs+, masktools2, RemoveGrain, avsresize & Zs_RF_Shared. Optional: avslibplacebo.
 #Supported formats: YUV[A] & Y (8-32 bit), progressive only.
 #2022.08.27
 
