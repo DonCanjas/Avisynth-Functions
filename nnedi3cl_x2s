@@ -1,7 +1,7 @@
 ## V1.3.1 by DonCanjas 
-### Enlarges images by 2 using nnedi3cl and automatically corrects shift with z_Spline36Resize
+### Enlarges images by 2 using nnedi3cl and corrects shift with z_Spline36Resize
 
-Function nnedi3cl_x2(clip c2, int "nsize", int "nns", int "qual", int "etype", int "pscrn", bool "st", bool "cshift", int "device", bool "list_device", bool "info")
+Function nnedi3cl_x2s(clip c2, int "nsize", int "nns", int "qual", int "etype", int "pscrn", bool "st", bool "cshift", int "device", bool "list_device", bool "info")
 {
 
 nsize = Default(nsize, 0)
