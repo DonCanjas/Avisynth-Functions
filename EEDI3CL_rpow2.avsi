@@ -43,9 +43,9 @@ Function EEDI3CL_rpow2(clip input, int "rfactor", int "field", float "alpha", fl
     input
     for (i = 0, step)
     {
-        EEDI3CL(rfactor=rfactor, field=field, dh=True, alpha=alpha, beta=beta, gamma=gamma, nrad=nrad, mdis=mdis, hp=hp, ucubic=ucubic, cost3=cost3, vcheck=vcheck, vthresh0=vthresh0, vthresh1=vthresh1, vthresh2=vthresh2, sclip=sclip, device=device)
+        EEDI3CL(field=field, dh=True, alpha=alpha, beta=beta, gamma=gamma, nrad=nrad, mdis=mdis, hp=hp, ucubic=ucubic, cost3=cost3, vcheck=vcheck, vthresh0=vthresh0, vthresh1=vthresh1, vthresh2=vthresh2, sclip=sclip, device=device)
         TurnRight()
-        EEDI3CL(rfactor=rfactor, field=field, dh=True, alpha=alpha, beta=beta, gamma=gamma, nrad=nrad, mdis=mdis, hp=hp, ucubic=ucubic, cost3=cost3, vcheck=vcheck, vthresh0=vthresh0, vthresh1=vthresh1, vthresh2=vthresh2, sclip=sclip, device=device)
+        EEDI3CL(field=field, dh=True, alpha=alpha, beta=beta, gamma=gamma, nrad=nrad, mdis=mdis, hp=hp, ucubic=ucubic, cost3=cost3, vcheck=vcheck, vthresh0=vthresh0, vthresh1=vthresh1, vthresh2=vthresh2, sclip=sclip, device=device)
         TurnLeft()
     }
 
