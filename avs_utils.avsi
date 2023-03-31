@@ -50,11 +50,11 @@ Function mirrorborders(clip c, int "bsize")
 #
 # Limits RGBPS clip to safe values.
 
-Function limitRGBPS(clip src) 
+Function limitRGBPS(clip c) 
 {    
-    bits = BitsPerComponent(src)
+    bits = BitsPerComponent(c)
     
-    if (!isPlanarRGB(src) || bits != 32) 
+    if (!isPlanarRGB(c) || bits != 32) 
     {
         Assert(false, "Only RGBPS supported")
     }
@@ -62,4 +62,32 @@ Function limitRGBPS(clip src)
     {
         Expr(src, "x 0 1 clip")
     }  
+}    
+    
+
+    
+# packrgb()
+#
+# Packs your clip to RGBP. 
+# Only Y 8-32 format.
+
+Function packrgb(clip c) 
+{
+    
+    Assert(isy(c), "Only Y 8-32 format" )
+    
+    bits = BitsPerComponent(c)
+
+    if (bits == 32 )
+    {
+      pix_fmt = "RGBPS"
+    }
+    else
+    {
+        pix_fmt = "RGBP"+String(bits)
+        pix_fmt = String(pix_fmt)
+    }
+    
+    CombinePlanes(c, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
+    
 }
