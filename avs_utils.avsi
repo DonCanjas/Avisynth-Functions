@@ -12,7 +12,6 @@
 
 
 
-
 # scrop()
 #
 #A wrapper for avs' internal function Crop(). S stands for Sane or Schizo, whatever you decide.
@@ -23,6 +22,8 @@ Function scrop(clip c, int "left", int "right", int "top", int "bottom", bool "a
 c.crop(left, top, -right, -bottom, align)
 
 }
+
+
 
 # mirrorborders()
 #
@@ -42,6 +43,7 @@ Function mirrorborders(clip c, int "bsize")
     
     c.z_PointResize(w+v1, h+v1, src_top=-bsize, src_left=-bsize, src_width=w+v1, src_height=h+v1)
 }
+
 
 
 # limitRGBPS()
