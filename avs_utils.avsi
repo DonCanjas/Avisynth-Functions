@@ -6,7 +6,7 @@
 ###                              ###
 ####################################
 
-### avs_utils version 31-03-2023 1.0
+### avs_utils version 01-04-2023 1.0
 ### Meme hearders aside, these are a collection of functions I either use or find that might useful.
 ### Everything is written with avs+ in mind.
 
@@ -17,10 +17,9 @@
 #A wrapper for avs' internal function Crop(). S stands for Sane or Schizo, whatever you decide.
 #It was written to drop the need for negative numbers and change the param order to make it function like vapoursynth's std.Crop().
 
-Function scrop(clip c, int "left", int "right", int "top", int "bottom", bool "align"){
-
-c.crop(left, top, -right, -bottom, align)
-
+Function scrop(clip c, int "left", int "right", int "top", int "bottom", bool "align")
+{
+    c.crop(left, top, -right, -bottom, align)
 }
 
 
