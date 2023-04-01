@@ -59,7 +59,7 @@ Function mirrorborders(clip c, int "bsize")
 
 # limitRGBPS()
 #
-# Limits RGBPS clip to safe values.
+# Clamps RGBPS clip to legal values.
 
 Function limitRGBPS(clip c) 
 {    
