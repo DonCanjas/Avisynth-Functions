@@ -6,7 +6,7 @@
 ###                              ###
 ####################################
 
-### avs_utils version 01-04-2023 1.0
+### avs_utils version 01-04-2023 1.1
 ### Meme hearders aside, these are a collection of functions I either use or find that might useful.
 ### Everything is written with avs+ in mind.
 
@@ -68,15 +68,42 @@ Function limitRGBPS(clip c)
 # packrgb()
 #
 # Packs your clip to RGBP. 
-# Only Y 8-32 format.
 
 Function packrgb(clip c) 
 {
     
-    Assert(isy(c), "Only Y 8-32 format" )
-    
     bits = BitsPerComponent(c)
 
+    if (bits == 32 )
+    {
+      pix_fmt = "RGBPS"
+    }
+    else
+    {
+        pix_fmt = "RGBP"+String(bits)
+        pix_fmt = String(pix_fmt)
+    }
+    
+    CombinePlanes(c, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
+    
+}
+
+
+# pack3rgb()
+#
+# Packs 3 clips to RGBP. 
+
+Function pack3rgb(clip "a", clip "b", clip "c") 
+{
+    
+    if (!Defined(a) || !Defined(b) || !Defined(c)) 
+    {
+        Assert(false, "pack3rgb: Needs 3 clips. Use packrgb() if you want to pack a single plane clip.")
+    }
+      
+    bits = BitsPerComponent(c)
+    
+    
     if (bits == 32 )
     {
       pix_fmt = "RGBPS"
