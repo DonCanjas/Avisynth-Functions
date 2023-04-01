@@ -10,6 +10,18 @@
 ### Meme hearders aside, these are a collection of functions I either use or find that might useful.
 ### Everything is written with avs+ in mind.
 
+### Included Functions
+###
+### scrop()
+###
+### mirrorborders()
+###
+### limitRGBPS()
+###
+### packrgb()
+###
+### pack3rgb()
+#######################
 
 
 # scrop()
