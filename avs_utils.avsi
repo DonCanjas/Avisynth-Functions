@@ -59,7 +59,7 @@ Function limitRGBPS(clip c)
     }
     else
     {
-        Expr(src, "x 0 1 clip")
+        Expr(c, "x 0 1 clip")
     }  
 }    
     
