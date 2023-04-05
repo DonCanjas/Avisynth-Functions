@@ -6,7 +6,7 @@
 ###                              ###
 ####################################
 
-### avs_utils version 01-04-2023 1.1
+### avs_utils version 05-04-2023 1.0
 ### Meme hearders aside, these are a collection of functions I either use or find that might useful.
 ### Everything is written with avs+ in mind.
 
@@ -31,6 +31,11 @@
 
 Function scrop(clip c, int "left", int "right", int "top", int "bottom", bool "align")
 {
+    left = Default(left, 0)
+    right = Default(right, 0)
+    top = Default(top, 0)
+    bottom = Default(bottom, 0)
+    
     c.crop(left, top, -right, -bottom, align)
 }
 
