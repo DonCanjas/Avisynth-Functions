@@ -2,13 +2,16 @@
 ###                              ###
 ###     DonCanjas presents:      ###
 ###     Don's Utils              ###
-###     31-03-2023               ###
+###     01-11-2023               ###
 ###                              ###
 ####################################
 
 ### avs_utils version 05-04-2023 1.0
 ### Meme hearders aside, these are a collection of functions I either use or find that might useful.
 ### Everything is written with avs+ in mind.
+
+### avs_utils version 01-11-2023 1.1
+### Fixed pack3rgb() that would use only clip c
 
 ### Included Functions
 ###
@@ -131,6 +134,6 @@ Function pack3rgb(clip "a", clip "b", clip "c")
         pix_fmt = String(pix_fmt)
     }
     
-    CombinePlanes(c, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
+    CombinePlanes(a, b, c, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
     
 }
