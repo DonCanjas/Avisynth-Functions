@@ -2,6 +2,7 @@
 Some functions I created
 
 Most of them are stupid. FineDehalo is okay.  
+Dehalo_Beta and FineBeta is barely better than Dehalo_Alpha and FineDehalo respectively.
 EEDI3CL_rpow2 is okay too.  
 rpow2_cshift as well.  
-SCrop is whatever you think of it.  
+avs_utils is whatever you think of it.  
