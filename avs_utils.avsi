@@ -121,7 +121,7 @@ Function pack3rgb(clip "r", clip "g", clip "b")
         Assert(false, "pack3rgb: Needs 3 clips. Use packrgb() if you want to pack a single plane clip.")
     }
       
-    bits = BitsPerComponent(c)
+    bits = BitsPerComponent(r)
     
     
     if (bits == 32 )
