@@ -113,10 +113,10 @@ Function packrgb(clip c)
 #
 # Packs 3 clips to RGBP. 
 
-Function pack3rgb(clip "a", clip "b", clip "c") 
+Function pack3rgb(clip "r", clip "g", clip "b") 
 {
     
-    if (!Defined(a) || !Defined(b) || !Defined(c)) 
+    if (!Defined(r) || !Defined(g) || !Defined(b)) 
     {
         Assert(false, "pack3rgb: Needs 3 clips. Use packrgb() if you want to pack a single plane clip.")
     }
@@ -134,6 +134,6 @@ Function pack3rgb(clip "a", clip "b", clip "c")
         pix_fmt = String(pix_fmt)
     }
     
-    CombinePlanes(a, b, c, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
+    CombinePlanes(r, g, b, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
     
 }
