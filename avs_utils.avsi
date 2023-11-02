@@ -2,16 +2,19 @@
 ###                              ###
 ###     DonCanjas presents:      ###
 ###     Don's Utils              ###
-###     01-11-2023               ###
+###     02-11-2023               ###
 ###                              ###
 ####################################
 
-### avs_utils version 05-04-2023 1.0
+### avs_utils version 05-04-2023
 ### Meme hearders aside, these are a collection of functions I either use or find that might useful.
 ### Everything is written with avs+ in mind.
 
-### avs_utils version 01-11-2023 1.1
+### avs_utils version 01-11-2023
 ### Fixed pack3rgb() that would use only clip c
+
+### avs_utils version 02-11-2023
+### packrgb() was upgraded in order to deprecate and delete pack3rgb()
 
 ### Included Functions
 ###
@@ -87,42 +90,12 @@ Function limitRGBPS(clip c)
     
 # packrgb()
 #
-# Packs your clip to RGBP. 
+# Packs your clip(s) to RGBP. 
 
-Function packrgb(clip c) 
+Function packrgb(clip "r", clip "g", clip "b") 
 {
-    
-    bits = BitsPerComponent(c)
-
-    if (bits == 32 )
-    {
-      pix_fmt = "RGBPS"
-    }
-    else
-    {
-        pix_fmt = "RGBP"+String(bits)
-        pix_fmt = String(pix_fmt)
-    }
-    
-    CombinePlanes(c, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
-    
-}
-
-
-# pack3rgb()
-#
-# Packs 3 clips to RGBP. 
-
-Function pack3rgb(clip "r", clip "g", clip "b") 
-{
-    
-    if (!Defined(r) || !Defined(g) || !Defined(b)) 
-    {
-        Assert(false, "pack3rgb: Needs 3 clips. Use packrgb() if you want to pack a single plane clip.")
-    }
-      
-    bits = BitsPerComponent(r)
-    
+         
+    bits = Defined(r) ? BitsPerComponent(r) : Defined(g) ? BitsPerComponent(g) : BitsPerComponent(b)
     
     if (bits == 32 )
     {
@@ -135,5 +108,5 @@ Function pack3rgb(clip "r", clip "g", clip "b")
     }
     
     CombinePlanes(r, g, b, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
-    
+
 }
