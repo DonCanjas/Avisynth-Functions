@@ -82,7 +82,7 @@ Function sborders(clip c, int "left", int "right", int "top", int "bottom", int 
 # Dependencies:
 #       avsresize
 
-Function padmod(clip c, int min, int mod)
+Function padmod(clip c, int "min", int "mod")
 {
 
 min = Default(min, 0)
