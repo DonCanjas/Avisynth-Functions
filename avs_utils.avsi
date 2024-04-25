@@ -1,10 +1,11 @@
-####################################
-###                              ###
-###     DonCanjas presents:      ###
-###     Don's Utils              ###
-###     25-04-2024               ###
-###                              ###
-####################################
+###########################################
+###                                     ###
+###     DonCanjas presents:             ###
+###     Don's Utils                     ###
+###     25-04-2024:                     ###
+###     Carnation Revolution Update     ###
+###                                     ###
+###########################################
 
 ### avs_utils version 05-04-2023
 ### Meme hearders aside, these are a collection of functions I either use or find that might useful.
@@ -64,6 +65,7 @@ Function sborders(clip c, int "left", int "right", int "top", int "bottom", int 
     left = Default(left, 0)
     right = Default(right, 0)
     top = Default(top, 0)
+    bottom = Default(bottom, 0)
     color = Default(color, $000000)
     
     c.AddBorders(left, top, right, bottom, color)
