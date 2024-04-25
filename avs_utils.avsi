@@ -2,7 +2,7 @@
 ###                              ###
 ###     DonCanjas presents:      ###
 ###     Don's Utils              ###
-###     25-04-2024🌹             ###
+###     25-04-2024               ###
 ###                              ###
 ####################################
 
@@ -16,7 +16,7 @@
 ### avs_utils version 02-11-2023
 ### packrgb() was upgraded in order to deprecate and delete pack3rgb()
 
-### avs_utils version 25-04-2024🌹
+### avs_utils version 25-04-2024 - Carnation Revolution update
 ### mirrorborders() isn't limited to a single value for all borders anymore
 ### s_addborders() was added
 ### padmod() was added
