@@ -1,14 +1,13 @@
-###########################################
-###                                     ###
-###     DonCanjas presents:             ###
-###     Don's Utils                     ###
-###     25-04-2024:                     ###
-###     Carnation Revolution Update     ###
-###                                     ###
-###########################################
+####################################
+###                              ###
+###     DonCanjas presents:      ###
+###     Don's Utils              ###
+###     29-04-2024               ###
+###                              ###
+####################################
 
 ### avs_utils version 05-04-2023
-### Meme hearders aside, these are a collection of functions I either use or find that might useful.
+### Meme hearders aside, these are a collection of functions I either use or think that might be useful.
 ### Everything is written with avs+ in mind.
 
 ### avs_utils version 01-11-2023
@@ -21,6 +20,10 @@
 ### mirrorborders() isn't limited to a single value for all borders anymore
 ### s_addborders() was added
 ### padmod() was added
+
+### avs_utils version 29-04-2024
+### Fixed identations
+### fixtvgamma() was added
 
 ### Included Functions
 ###
@@ -35,6 +38,8 @@
 ### limitRGBPS()
 ###
 ### packrgb()
+###
+### fixtvgamma()
 #######################
 
 
@@ -45,12 +50,14 @@
 
 Function scrop(clip c, int "left", int "right", int "top", int "bottom", bool "align")
 {
+
     left = Default(left, 0)
     right = Default(right, 0)
     top = Default(top, 0)
     bottom = Default(bottom, 0)
     
     c.crop(left, top, -right, -bottom, align)
+
 }
 
 
@@ -58,10 +65,11 @@ Function scrop(clip c, int "left", int "right", int "top", int "bottom", bool "a
 # sborders()
 #
 #A wrapper for avs' internal function AddBorders(). S stands for Sane, Schizo, or whatever else you decide.
-#It was written to drop the need for negative numbers and change the param order to make it function like scrop().
+#It was written to change the param order to make it function like scrop().
 
 Function sborders(clip c, int "left", int "right", int "top", int "bottom", int "color")
 {
+    
     left = Default(left, 0)
     right = Default(right, 0)
     top = Default(top, 0)
@@ -69,6 +77,7 @@ Function sborders(clip c, int "left", int "right", int "top", int "bottom", int 
     color = Default(color, $000000)
     
     c.AddBorders(left, top, right, bottom, color)
+    
 }
 
 
@@ -87,27 +96,27 @@ Function sborders(clip c, int "left", int "right", int "top", int "bottom", int 
 Function padmod(clip c, int "min", int "mod")
 {
 
-min = Default(min, 0)
-mod = Default(mod, 4)
-
-og_w = Width(c)
-og_h = Height(c)
-
-w = og_w + min * 2
-h = og_h + min * 2
-
-ph = mod - ((w - 1) % mod + 1)
-pv = mod - ((h - 1) % mod + 1)
-
-left = ( floor(ph / 2) ) + min
-right = ( ph - left ) + min
-top = ( floor(pv / 2) ) + min
-bottom = ( pv - top ) + min
-
-width = og_w + left + right
-height = og_h + top + bottom
-
-c.z_PointResize(width, height, src_left=-left, src_top=-top, src_width=width, src_height=height)
+    min = Default(min, 0)
+    mod = Default(mod, 4)
+    
+    og_w = Width(c)
+    og_h = Height(c)
+    
+    w = og_w + min * 2
+    h = og_h + min * 2
+    
+    ph = mod - ((w - 1) % mod + 1)
+    pv = mod - ((h - 1) % mod + 1)
+    
+    left = ( floor(ph / 2) ) + min
+    right = ( ph - left ) + min
+    top = ( floor(pv / 2) ) + min
+    bottom = ( pv - top ) + min
+    
+    width = og_w + left + right
+    height = og_h + top + bottom
+    
+    c.z_PointResize(width, height, src_left=-left, src_top=-top, src_width=width, src_height=height)
 
 }
 
@@ -124,6 +133,7 @@ c.z_PointResize(width, height, src_left=-left, src_top=-top, src_width=width, sr
 
 Function mirrorborders(clip c, int "left", int "right", int "top", int "bottom")
 {
+    
     left = Default(left, 0)
     right = Default(right, 0)
     top = Default(top, 0)
@@ -136,6 +146,7 @@ Function mirrorborders(clip c, int "left", int "right", int "top", int "bottom")
     h_mirror_pad = h + top + bottom    
     
     c.z_PointResize(w_mirror_pad, h_mirror_pad, src_left=-left, src_top=-top, src_width=w_mirror_pad, src_height=h_mirror_pad)
+
 }
 
 
@@ -146,6 +157,7 @@ Function mirrorborders(clip c, int "left", int "right", int "top", int "bottom")
 
 Function limitRGBPS(clip c) 
 {    
+
     bits = BitsPerComponent(c)
     
     if (!isPlanarRGB(c) || bits != 32) 
@@ -156,6 +168,7 @@ Function limitRGBPS(clip c)
     {
         Expr(c, "x 0 1 clip")
     }  
+
 }    
     
 
@@ -181,4 +194,51 @@ Function packrgb(clip "r", clip "g", clip "b")
     
     CombinePlanes(r, g, b, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
 
+}
+
+
+
+# fixtvgamma()
+#
+# Fixes gamma bug in Y or YUV clips at 16 bit depth. If input is lower than 16 bit, it'll convert.
+
+function fixtvgamma(clip c, bool "dither")
+{    
+    
+    dither = Default(dither, false)
+    
+    bits = BitsPerComponent(c)
+    range = propGetAny(c, "_ColorRange")
+    yuv = isYUV(c) 
+    gray = isY(c)
+    
+    if (!yuv || bits > 16 || range != 1) 
+    {
+        Assert(false, "Only limited range 8-16 bit Y or YUV supported")
+    }
+    
+    if (bits < 16) 
+    {
+        c = c.ConvertBits(16)
+    }
+    
+    if (gray == False)
+    {
+        
+        y = c.ExtractY()
+        y = y.Levels(4096, 0.88, 60160, 4096, 60160, false, dither)
+    
+        u = c.ExtractU()   
+        v = c.ExtractV()   
+    
+        gammafix = CombinePlanes(Y, U, V, planes="YUV", source_planes="YYY", sample_clip=c)
+        
+    }    
+    else
+    {
+        gammafix = c.Levels(4096, 0.88, 60160, 4096, 60160, false, dither)
+    }
+    
+    return gammafix
+    
 }
