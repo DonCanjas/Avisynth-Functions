@@ -2,7 +2,7 @@
 ###                              ###
 ###     DonCanjas presents:      ###
 ###     Don's Utils              ###
-###     29-04-2024               ###
+###     30-04-2024 - r1          ###
 ###                              ###
 ####################################
 
@@ -25,11 +25,17 @@
 ### Fixed identations
 ### fixtvgamma() was added
 
+### avs_utils version 30-04-2024 - r1
+### changed fixtvgamma() to operate at 32 bit
+### sfillborders() was added
+
 ### Included Functions
 ###
 ### scrop()
 ###
 ### sborders()
+###
+### sfillborders()
 ###
 ### padmod()
 ###
@@ -45,8 +51,8 @@
 
 # scrop()
 #
-#A wrapper for avs' internal function Crop(). S stands for Sane, Schizo, or whatever else you decide.
-#It was written to drop the need for negative numbers and change the param order to make it function like vapoursynth's std.Crop().
+# A wrapper for avs' internal function Crop(). S stands for Sane, Schizo, or whatever else you decide.
+# It was written to drop the need for negative numbers and change the param order to make it function like vapoursynth's std.Crop().
 
 Function scrop(clip c, int "left", int "right", int "top", int "bottom", bool "align")
 {
@@ -64,8 +70,8 @@ Function scrop(clip c, int "left", int "right", int "top", int "bottom", bool "a
 
 # sborders()
 #
-#A wrapper for avs' internal function AddBorders(). S stands for Sane, Schizo, or whatever else you decide.
-#It was written to change the param order to make it function like scrop().
+# A wrapper for avs' internal function AddBorders(). S stands for Sane, Schizo, or whatever else you decide.
+# It was written to change the param order to make it function like scrop().
 
 Function sborders(clip c, int "left", int "right", int "top", int "bottom", int "color")
 {
@@ -78,6 +84,33 @@ Function sborders(clip c, int "left", int "right", int "top", int "bottom", int 
     
     c.AddBorders(left, top, right, bottom, color)
     
+}
+
+
+
+# sfillborders()
+#
+# Wrapper for FillBorders. It'll add borders automatically.
+# Changes param order to make it function like sborders().
+#
+# Dependencies:
+#       FillBorders: https://github.com/Asd-g/AviSynth-FillBorders
+
+Function sfillborders(clip c, int "left", int "right", int "top", int "bottom", int "mode", int "y", int "u", int "v")
+{
+    
+    left = Default(left, 0)
+    right = Default(right, 0)
+    top = Default(top, 0)
+    bottom = Default(bottom, 0)
+    mode = Default(mode, 0)
+    y = Default(y, 3)
+    u = Default(u, 3)
+    v = Default(v, 3)
+
+    c.AddBorders(left, top, right, bottom)
+    FillBorders(left=left, top=top, right=right, bottom=bottom, mode=mode, y=y, u=u, v=v)
+
 }
 
 
@@ -200,7 +233,7 @@ Function packrgb(clip "r", clip "g", clip "b")
 
 # fixtvgamma()
 #
-# Fixes gamma bug in Y or YUV clips at 16 bit depth. If input is lower than 16 bit, it'll convert.
+# Fixes gamma bug in Y or YUV clips at 32 bit depth. If input is lower than 32 bit, it'll convert.
 
 function fixtvgamma(clip c, bool "dither")
 {    
@@ -208,25 +241,24 @@ function fixtvgamma(clip c, bool "dither")
     dither = Default(dither, false)
     
     bits = BitsPerComponent(c)
-    range = propGetAny(c, "_ColorRange")
     yuv = isYUV(c) 
     gray = isY(c)
     
-    if (!yuv || bits > 16 || range != 1) 
+    if (!yuv) 
     {
-        Assert(false, "Only limited range 8-16 bit Y or YUV supported")
+        Assert(false, "Only Y or YUV supported")
     }
     
-    if (bits < 16) 
+    if (bits < 32) 
     {
-        c = c.ConvertBits(16)
+        c = c.ConvertBits(32)
     }
     
     if (gray == False)
     {
         
         y = c.ExtractY()
-        y = y.Levels(4096, 0.88, 60160, 4096, 60160, false, dither)
+        y = y.Levels(0, 0.88, 1, 0, 1, false, dither)
     
         u = c.ExtractU()   
         v = c.ExtractV()   
@@ -236,9 +268,10 @@ function fixtvgamma(clip c, bool "dither")
     }    
     else
     {
-        gammafix = c.Levels(4096, 0.88, 60160, 4096, 60160, false, dither)
+        gammafix = c.Levels(0, 0.88, 1, 0, 1, false, dither)
     }
     
     return gammafix
     
 }
+
