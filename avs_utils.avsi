@@ -28,6 +28,8 @@
 ### avs_utils version 30-04-2024 - r1
 ### changed fixtvgamma() to operate at 32 bit
 ### sfillborders() was added
+    ### avs_utils version 30-04-2024 - r2
+    ### added addborder param to sfillborders()
 
 ### Included Functions
 ###
@@ -90,13 +92,13 @@ Function sborders(clip c, int "left", int "right", int "top", int "bottom", int 
 
 # sfillborders()
 #
-# Wrapper for FillBorders. It'll add borders automatically.
+# Wrapper for FillBorders. It'll add borders by default, unless addborder=false.
 # Changes param order to make it function like sborders().
 #
 # Dependencies:
 #       FillBorders: https://github.com/Asd-g/AviSynth-FillBorders
 
-Function sfillborders(clip c, int "left", int "right", int "top", int "bottom", int "mode", int "y", int "u", int "v")
+Function sfillborders(clip c, int "left", int "right", int "top", int "bottom", int "mode", bool "addborder", int "y", int "u", int "v")
 {
     
     left = Default(left, 0)
@@ -104,12 +106,13 @@ Function sfillborders(clip c, int "left", int "right", int "top", int "bottom", 
     top = Default(top, 0)
     bottom = Default(bottom, 0)
     mode = Default(mode, 0)
+    addborder = Default(addborder, true)
     y = Default(y, 3)
     u = Default(u, 3)
     v = Default(v, 3)
 
-    c.AddBorders(left, top, right, bottom)
-    FillBorders(left=left, top=top, right=right, bottom=bottom, mode=mode, y=y, u=u, v=v)
+    borders = addborder ? c.AddBorders(left, top, right, bottom) : c
+    borders.FillBorders(left=left, top=top, right=right, bottom=bottom, mode=mode, y=y, u=u, v=v)
 
 }
 
