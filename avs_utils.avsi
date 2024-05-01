@@ -2,7 +2,7 @@
 ###                              ###
 ###     DonCanjas presents:      ###
 ###     Don's Utils              ###
-###     30-04-2024 - r1          ###
+###     30-04-2024 - r2          ###
 ###                              ###
 ####################################
 
@@ -30,6 +30,7 @@
 ### sfillborders() was added
     ### avs_utils version 30-04-2024 - r2
     ### added addborder param to sfillborders()
+    ### fixed typos
 
 ### Included Functions
 ###
@@ -178,10 +179,10 @@ Function mirrorborders(clip c, int "left", int "right", int "top", int "bottom")
     w = Width(c)
     h = Height(c)
 
-    w_mirror_pad = w + left+right    
-    h_mirror_pad = h + top + bottom    
+    width = w + left + right    
+    height = h + top + bottom    
     
-    c.z_PointResize(w_mirror_pad, h_mirror_pad, src_left=-left, src_top=-top, src_width=w_mirror_pad, src_height=h_mirror_pad)
+    c.z_PointResize(width, height, src_left=-left, src_top=-top, src_width=width, src_height=height)
 
 }
 
