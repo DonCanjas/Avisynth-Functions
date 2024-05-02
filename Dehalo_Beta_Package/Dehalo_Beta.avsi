@@ -3,6 +3,9 @@
 #Supported formats: YUV[A] & Y (8-32 bit), progressive only.
 #2022.08.27
 
+#2024.05.02
+#Changed b=1/3, c=1/3 to 1.0/3.0 to force float
+
 function DeHalo_Beta_mt(clip input, float "rx", float "ry", float "darkstr", float "brightstr", float "lowsens", float "highsens", float "ss", bool "cs", int "search_rade", int "search_radi", bool "useplacebo")
 {
 sre       = default( search_rade,   1 )
@@ -55,7 +58,7 @@ ox  = clp.width()
 oy  = clp.height()
 
 
-dehalo  = clp.z_BicubicResize(m4_sh(ox/rx),m4_sh(oy/ry), b=1/3, c=1/3).z_BicubicResize(ox,oy,b=1,c=0)
+dehalo  = clp.z_BicubicResize(m4_sh(ox/rx),m4_sh(oy/ry), b=float(1.00/3.00), c=float(1.00/3.00)).z_BicubicResize(ox,oy,b=1,c=0)
 
 clp_minmax    = sre==1 && sri==1 ? clp.mt_edge(mode="min/max", thY1=0, thY2=255)  : mt_lutxy(clp.spasses(sre,"mt_expand()"),clp.spasses(sri,"mt_inpand()"),"x y -",use_expr=3,U=1,V=1)
 dehalo_minmax   = sre==1 && sri==1 ? dehalo.mt_edge(mode="min/max", thY1=0, thY2=255) : mt_lutxy(dehalo.spasses(sre,"mt_expand()"),dehalo.spasses(sri,"mt_inpand()"),"x y -",use_expr=3,U=1,V=1)
@@ -65,8 +68,8 @@ lets   = mt_merge(dehalo,clp,mask,U=1,V=1)
 
 remove = (ss==1.0) ? clp.repair(lets,1,0) 
 \ : clp.z_LanczosResize(m4_sh(ox*ss),m4_sh(oy*ss), taps=3)
-\ .mt_logic(lets.mt_expand(U=1,V=1).z_BicubicResize(m4_sh(ox*ss),m4_sh(oy*ss), b=1/3, c=1/3),"min",U=2,V=2)
-\ .mt_logic(lets.mt_inpand(U=1,V=1).z_BicubicResize(m4_sh(ox*ss),m4_sh(oy*ss), b=1/3, c=1/3),"max",U=2,V=2)
+\ .mt_logic(lets.mt_expand(U=1,V=1).z_BicubicResize(m4_sh(ox*ss),m4_sh(oy*ss), b=1.0/3.0, c=1.0/3.0),"min",U=2,V=2)
+\ .mt_logic(lets.mt_inpand(U=1,V=1).z_BicubicResize(m4_sh(ox*ss),m4_sh(oy*ss), b=1.0/3.0, c=1.0/3.0),"max",U=2,V=2)
 \ .z_LanczosResize(ox,oy, taps=3)
 them   =  mt_lutxy(clp,remove,"x y < x x y - "+DRK+" * - x x y - "+BRT+" * - ?",use_expr=1,U=2,V=2)
 
