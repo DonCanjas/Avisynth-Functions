@@ -355,7 +355,7 @@ Function linearscaling(clip c, int "width", int "height", string "scaler", float
         
     }
   
-  return scaled_gamma
+    return scaled_gamma
     
 }
 
