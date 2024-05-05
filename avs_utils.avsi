@@ -2,7 +2,7 @@
 ###                              ###
 ###     DonCanjas presents:      ###
 ###     Don's Utils              ###
-###     30-04-2024 - r2          ###
+###     05-05-2024 - r1          ###
 ###                              ###
 ####################################
 
@@ -32,6 +32,10 @@
     ### added addborder param to sfillborders()
     ### fixed typos
 
+### avs_utils version 05-05-2024 - r1
+### linearscaling() was added
+### add TODO to fixtvgamma()
+
 ### Included Functions
 ###
 ### scrop()
@@ -49,6 +53,8 @@
 ### packrgb()
 ###
 ### fixtvgamma()
+###
+### linearscaling()
 #######################
 
 
@@ -238,6 +244,9 @@ Function packrgb(clip "r", clip "g", clip "b")
 # fixtvgamma()
 #
 # Fixes gamma bug in Y or YUV clips at 32 bit depth. If input is lower than 32 bit, it'll convert.
+#
+# TODO:
+#       Let user choose between 16 and 32 bit outputs, defaulting to 16 bit if input isn't 32 bit.
 
 function fixtvgamma(clip c, bool "dither")
 {    
@@ -278,4 +287,76 @@ function fixtvgamma(clip c, bool "dither")
     return gammafix
     
 }
+
+
+
+# linearscaling()
+#
+# Uses avsresize to do linear light scaling. Y and RGB convert directly to linear 32 bit. YUV will convert to linear RGBPS. It uses frames props in order to get an automatic conversion.
+#
+# Dependencies:
+#       avsresize
+#
+# TODO:
+#       replace scaler_uv with scaler_uv for linear conversion and scaler_uv for gamma conversion
+#       add possibility to parse own colorspace_op and chromaloc_op
+#       add possibility to output at any pixel format
+#       add kernels as scaler_param presets (ex: Robidoux, RobidouxSharp, etc)
+
+Function linearscaling(clip c, int "width", int "height", string "scaler", float "scaler_param_a", float "scaler_param_b", string "scaler_uv", float "scaler_param_a_uv", float "scaler_param_b_uv")
+{
+    
+    pix_fmt = PixelType(c)
+    gray = isY(c)
+    
+    #defaults
+    width = Default(width, Width(c))
+    height = Default(height, Height(c))
+    
+    scaler = Default(scaler, "bicubic")
+    scaler_param_a = Default(scaler_param_a, 1.00/3.00)
+    scaler_param_b = Default(scaler_param_b, 1.00/3.00)
+    
+    scaler_uv = Default(scaler_uv, scaler)
+    scaler_param_a_uv = Default(scaler_param_a_uv, scaler_param_a)
+    scaler_param_b_uv = Default(scaler_param_b_uv, scaler_param_b)
+    
+    #frame props
+    matrix_idx = propGetAny(c, "_Matrix")
+    transfer_idx = propGetAny(c, "_ColorRange")
+    primaries_idx = propGetAny(c, "_Primaries")
+    range_idx = propGetAny(c, "_ColorRange")
+    chromaloc_idx = propGetAny(c, "_ChromaLocation")
+    
+    matrix = Select(matrix_idx, "rgb", "709", "unspec", "fcc", "470bg", "170m", "240", "ycgco", "2020ncl", "2020cl", "chromancl", "chromacl", "ictcp")    
+    transfer =  Select(transfer_idx, "", "709", "unspec", "470m", "470bg", "601", "240m", "linear", "log100", "log316", "xvycc", "srgb", "2020_10", "2020_12", "st2084", "std-b67", "prophoto")
+    primaries = Select(primaries_idx, "", "709", "unspec", "470m", "470bg", "170m", "240m", "film", "2020", "st428", "st431-2", "st432-1", "jedec-p22", "prophoto")
+    range = Select(range_idx, "full", "limited")
+    chromaloc = gray ? nop() : Select(chromaloc_idx, "left", "center", "topleft", "top", "bottomleft", "bottom")
+    
+    if (gray == True)
+    {
+        
+        linear = c.z_ConvertFormat(pixel_type="Y32", colorspace_op=matrix+":"+transfer+":"+primaries+":"+range+"""=>"""+matrix+":linear:"+primaries+":full")
+        
+        scaled_linear = linear.z_ConvertFormat(width=width, height=height, resample_filter=scaler, filter_param_a=scaler_param_a, filter_param_b=scaler_param_b)
+    
+        scaled_gamma = scaled_linear.z_ConvertFormat(pixel_type=pix_fmt, colorspace_op=matrix+":linear:"+primaries+":full=>"+matrix+":"+transfer+":"+primaries+":"+range+"")
+        
+    }
+    else
+    {
+        
+        linear = c.z_ConvertFormat(pixel_type="RGBPS", colorspace_op=matrix+":"+transfer+":"+primaries+":"+range+"""=>RGB:linear:"""+primaries+":full", chromaloc_op=chromaloc+"=>center", resample_filter_uv=scaler_uv, filter_param_a_uv=scaler_param_a_uv, filter_param_b_uv=scaler_param_b_uv)
+    
+        scaled_linear = linear.z_ConvertFormat(width=width, height=height, resample_filter=scaler, filter_param_a=scaler_param_a, filter_param_b=scaler_param_b)
+    
+        scaled_gamma = scaled_linear.z_ConvertFormat(pixel_type=pix_fmt, colorspace_op="RGB:linear:"+primaries+":full=>"+matrix+":"+transfer+":"+primaries+":"+range+"", chromaloc_op="center=>"+chromaloc, resample_filter_uv=scaler_uv, filter_param_a_uv=scaler_param_a_uv, filter_param_b_uv=scaler_param_b_uv)
+        
+    }
+  
+  return scaled_gamma
+    
+}
+
 
