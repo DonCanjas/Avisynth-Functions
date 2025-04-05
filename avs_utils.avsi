@@ -1,8 +1,8 @@
 ####################################
 ###                              ###
-###     DonCanjas presents:      ###
-###     Don's Utils              ###
-###     05-05-2024 - r1          ###
+###     doncanjas presents:      ###
+###     don's utils              ###
+###     05-04-2025 - r1          ###
 ###                              ###
 ####################################
 
@@ -36,6 +36,10 @@
 ### linearscaling() was added
 ### add TODO to fixtvgamma()
 
+### avs_utils version 05-04-2025 - r1
+### bgrtorgb() and gbrtorgb() were added
+
+
 ### Included Functions
 ###
 ### scrop()
@@ -55,6 +59,10 @@
 ### fixtvgamma()
 ###
 ### linearscaling()
+###
+### bgrtorgb()
+###
+### gbrtorgb()
 #######################
 
 
@@ -356,6 +364,80 @@ Function linearscaling(clip c, int "width", int "height", string "scaler", float
     }
   
     return scaled_gamma
+    
+}
+
+
+
+# bgrtorgb()
+#
+# Converts a BGR clip to RGBP. Input must be in RGB(P) format.
+
+Function bgrtorgb(clip c)
+{
+    
+    rgb = c.isRGB()
+    
+    if (!rgb)
+    {
+    Assert(false, "Clip must be in RGB format")
+    }
+          
+    c = IsPlanar(c) ? c : c.ConvertToPlanarRGB()          
+    bits = BitsPerComponent(c)
+    
+    if (bits == 32 )
+    {
+      pix_fmt = "RGBPS"
+    }
+    else
+    {
+        pix_fmt = "RGBP"+String(bits)
+        pix_fmt = String(pix_fmt)
+    }
+    
+    r = c.ExtractR()
+    g = c.ExtractG()
+    b = c.ExtractB()
+    
+    CombinePlanes(b, g, r, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
+    
+}
+
+
+
+# gbrtorgb()
+#
+# Converts a GBR clip to RGBP. Input must be in RGB(P) format.
+
+Function gbrtorgb(clip c)
+{
+    
+    rgb = c.isRGB()
+    
+    if (!rgb)
+    {
+    Assert(false, "Clip must be in RGB format")
+    }
+           
+    c = IsPlanar(c) ? c : c.ConvertToPlanarRGB()       
+    bits = BitsPerComponent(c)
+    
+    if (bits == 32 )
+    {
+      pix_fmt = "RGBPS"
+    }
+    else
+    {
+        pix_fmt = "RGBP"+String(bits)
+        pix_fmt = String(pix_fmt)
+    }
+    
+    r = c.ExtractR()
+    g = c.ExtractG()
+    b = c.ExtractB()
+    
+    CombinePlanes(g, b, r, planes="RGB", source_planes="YYY", pixel_type=pix_fmt)
     
 }
 
